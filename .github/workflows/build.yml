@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: build-${{ github.ref }}
@@ -59,3 +59,35 @@ jobs:
           path: |
             HMCL/build/libs/HMCL-*
             !HMCL/build/libs/**/*.asc
+
+  release:
+    name: Publish GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download platform artifacts
+        uses: actions/download-artifact@v8
+        with:
+          pattern: neoHMCL-*
+          path: artifacts
+
+      - name: Prepare release files
+        shell: bash
+        run: |
+          mkdir -p release
+          while IFS= read -r file; do
+            platform=$(basename "$(dirname "$file")" | sed 's/^neoHMCL-//' | sed "s/-${GITHUB_SHA}$//")
+            name=$(basename "$file")
+            cp "$file" "release/${platform}-${name}"
+          done < <(find artifacts -type f)
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          gh release create "${GITHUB_REF_NAME}" release/* \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "neoHMCL ${GITHUB_REF_NAME#v}" \
+            --generate-notes
