@@ -55,6 +55,11 @@ public final class DownloadProviders {
         settings().downloadThreadsProperty().addListener(onChangeDownloadThreads);
         onChangeDownloadThreads.invalidated(null);
 
+        InvalidationListener onChangeParallelDownloadThreads = observable ->
+                FetchTask.setParallelDownloadParts(settings().parallelDownloadThreadsProperty().get());
+        settings().parallelDownloadThreadsProperty().addListener(onChangeParallelDownloadThreads);
+        onChangeParallelDownloadThreads.invalidated(null);
+
         FXUtils.onChangeAndOperate(settings().versionListSourceProperty(), PROVIDER::setVersionListSource);
         FXUtils.onChangeAndOperate(settings().fileDownloadSourceProperty(), PROVIDER::setFileSource);
     }

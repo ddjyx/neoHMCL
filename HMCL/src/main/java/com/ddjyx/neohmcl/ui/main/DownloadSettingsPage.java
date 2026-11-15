@@ -173,7 +173,38 @@ public class DownloadSettingsPage extends StackPane {
                 }
             }, settings().autoDownloadThreadsProperty(), settings().downloadThreadsProperty()));
 
-            downloadList.getContent().addAll(fileCommonLocationSublist, downloadThreadsSublist);
+            ComponentSublist parallelDownloadThreadsSublist = new ComponentSublist(() -> {
+                HBox hbox = new HBox(8);
+                hbox.setAlignment(Pos.CENTER);
+                JFXSlider slider = new JFXSlider(1, 16, 4);
+                HBox.setHgrow(slider, Priority.ALWAYS);
+                JFXTextField threadsField = new JFXTextField();
+                FXUtils.setLimitWidth(threadsField, 60);
+                FXUtils.bind(threadsField, settings().parallelDownloadThreadsProperty(), SafeStringConverter.fromInteger()
+                        .restrict(it -> it >= 1 && it <= 16)
+                        .fallbackTo(4)
+                        .asPredicate(Validator.addTo(threadsField)));
+                var changedByTextField = new Holder<>(false);
+                FXUtils.onChangeAndOperate(settings().parallelDownloadThreadsProperty(), value -> {
+                    changedByTextField.value = true;
+                    slider.setValue(value.intValue());
+                    changedByTextField.value = false;
+                });
+                slider.valueProperty().addListener((value, oldVal, newVal) -> {
+                    if (!changedByTextField.value) {
+                        settings().parallelDownloadThreadsProperty().set(value.getValue().intValue());
+                    }
+                });
+                hbox.getChildren().setAll(slider, threadsField);
+                return List.of(hbox);
+            });
+            parallelDownloadThreadsSublist.setTitle(i18n("settings.launcher.download.parallel_threads"));
+            parallelDownloadThreadsSublist.descriptionProperty().bind(Bindings.createStringBinding(
+                    () -> i18n("settings.launcher.download.parallel_threads.value",
+                            settings().parallelDownloadThreadsProperty().get()),
+                    settings().parallelDownloadThreadsProperty()));
+
+            downloadList.getContent().addAll(fileCommonLocationSublist, downloadThreadsSublist, parallelDownloadThreadsSublist);
             content.getChildren().addAll(ComponentList.createComponentListTitle(i18n("download")), downloadList);
         }
 

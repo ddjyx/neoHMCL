@@ -499,6 +499,15 @@ public final class LauncherSettings extends ObservableSetting implements JsonSch
         return downloadThreads;
     }
 
+    /// The number of HTTP byte-range parts used for each large file.
+    @SerializedName("parallelDownloadThreads")
+    private final IntegerProperty parallelDownloadThreads = new SimpleIntegerProperty(4);
+
+    /// Returns the per-file parallel download thread count property.
+    public IntegerProperty parallelDownloadThreadsProperty() {
+        return parallelDownloadThreads;
+    }
+
     /// The selected game version list download source.
     @SerializedName("versionListSource")
     private final ObjectProperty<DownloadSource> versionListSource = new RawPreservingObjectProperty<>(DownloadSource.DEFAULT);

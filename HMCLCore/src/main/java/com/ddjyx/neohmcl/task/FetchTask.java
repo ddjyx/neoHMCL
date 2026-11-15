@@ -522,7 +522,18 @@ public abstract class FetchTask<T extends @UnknownNullability Object> extends Ta
     }
 
     private static final long PARALLEL_DOWNLOAD_THRESHOLD = 1024L * 1024L;
-    private static final int PARALLEL_DOWNLOAD_PARTS = 4;
+    private static volatile int parallelDownloadParts = 4;
+
+    /// Sets the number of HTTP byte-range parts used for each large file.
+    /// A value of one disables per-file parallelism.
+    public static void setParallelDownloadParts(int parts) {
+        parallelDownloadParts = Math.max(parts, 1);
+    }
+
+    /// Returns the configured number of HTTP byte-range parts per large file.
+    public static int getParallelDownloadParts() {
+        return parallelDownloadParts;
+    }
 
     /// Downloads a sufficiently large HTTP file through independent byte ranges.
     ///
@@ -532,7 +543,8 @@ public abstract class FetchTask<T extends @UnknownNullability Object> extends Ta
                                             Duration readTimeout)
             throws IOException, InterruptedException {
         Path target = getParallelDownloadTarget();
-        if (target == null || isCancelled()) {
+        int partCount = parallelDownloadParts;
+        if (target == null || partCount <= 1 || isCancelled()) {
             return false;
         }
 
@@ -561,13 +573,13 @@ public abstract class FetchTask<T extends @UnknownNullability Object> extends Ta
         }
 
         Path partsDirectory = Files.createTempDirectory("neohmcl-download-");
-        List<Path> parts = new ArrayList<>(PARALLEL_DOWNLOAD_PARTS);
-        List<Future<?>> futures = new ArrayList<>(PARALLEL_DOWNLOAD_PARTS);
+        List<Path> parts = new ArrayList<>(partCount);
+        List<Future<?>> futures = new ArrayList<>(partCount);
         AtomicLong downloaded = new AtomicLong();
-        long partSize = (totalLength + PARALLEL_DOWNLOAD_PARTS - 1) / PARALLEL_DOWNLOAD_PARTS;
+        long partSize = (totalLength + partCount - 1) / partCount;
 
         try {
-            for (int i = 0; i < PARALLEL_DOWNLOAD_PARTS; i++) {
+            for (int i = 0; i < partCount; i++) {
                 long start = i * partSize;
                 long end = Math.min(totalLength - 1, start + partSize - 1);
                 Path part = partsDirectory.resolve(Integer.toString(i));
