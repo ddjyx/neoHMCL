@@ -1,0 +1,61 @@
+name: Build neoHMCL
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+          - macos-latest
+
+    env:
+      VERSION_ROOT: '3'
+      VERSION_TYPE: stable
+      MICROSOFT_AUTH_ID: ${{ secrets.MICROSOFT_AUTH_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v6
+        with:
+          distribution: liberica
+          java-version: '17'
+          java-package: jdk+fx
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Build
+        shell: bash
+        run: ./gradlew build --no-daemon --parallel --stacktrace
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: neoHMCL-${{ matrix.os }}-${{ github.sha }}
+          if-no-files-found: error
+          path: |
+            HMCL/build/libs/HMCL-*
+            !HMCL/build/libs/**/*.asc
