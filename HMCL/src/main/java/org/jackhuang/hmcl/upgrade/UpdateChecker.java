@@ -42,6 +42,14 @@ public final class UpdateChecker {
     private static final ReadOnlyBooleanWrapper checkingUpdate = new ReadOnlyBooleanWrapper(false);
     private static final ReadOnlyObjectWrapper<@Nullable Throwable> error = new ReadOnlyObjectWrapper<>();
 
+    /// Whether this build is allowed to query the launcher update service.
+    /// Non-official builds (such as derivatives of HMCL) must not use the upstream
+    /// update service, otherwise they would be offered an official build to replace
+    /// themselves with.
+    public static boolean isUpdateCheckAvailable() {
+        return Metadata.OFFICIAL_BUILD;
+    }
+
     public static void init() {
         requestCheckUpdate(UpdateChannel.getChannel(), settings().acceptPreviewUpdateProperty().get());
     }
@@ -93,6 +101,11 @@ public final class UpdateChecker {
     }
 
     public static void requestCheckUpdate(UpdateChannel channel, boolean preview) {
+        if (!isUpdateCheckAvailable()) {
+            LOG.info("Skipped launcher update check: this build is not an official build");
+            return;
+        }
+
         Platform.runLater(() -> {
             if (isCheckingUpdate())
                 return;

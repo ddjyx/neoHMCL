@@ -56,7 +56,7 @@ import static org.jackhuang.hmcl.util.logging.Logger.LOG;
 
 public final class SettingsPage extends ScrollPane {
     @SuppressWarnings("FieldCanBeLocal")
-    private final InvalidationListener updateListener;
+    private InvalidationListener updateListener;
 
     public SettingsPage() {
         this.setFitToWidth(true);
@@ -66,7 +66,7 @@ public final class SettingsPage extends ScrollPane {
         this.setContent(rootPane);
         ScrollUtils.installSmoothScrolling(this);
 
-        {
+        if (UpdateChecker.isUpdateCheckAvailable()) {
             ComponentList updatePaneList = new ComponentList();
             {
                 ObjectProperty<UpdateChannel> updateChannel;
