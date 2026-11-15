@@ -1,17 +1,17 @@
-import org.jackhuang.hmcl.gradle.TerracottaConfigUpgradeTask
-import org.jackhuang.hmcl.gradle.addon.FormatJsonFile
-import org.jackhuang.hmcl.gradle.addon.UpdateAddonProjectInfos
-import org.jackhuang.hmcl.gradle.ci.GitHubActionUtils
-import org.jackhuang.hmcl.gradle.ci.JenkinsUtils
-import org.jackhuang.hmcl.gradle.l10n.CheckTranslations
-import org.jackhuang.hmcl.gradle.l10n.CreateLanguageList
-import org.jackhuang.hmcl.gradle.l10n.CreateLocaleNamesResourceBundle
-import org.jackhuang.hmcl.gradle.l10n.SyncTranslations
-import org.jackhuang.hmcl.gradle.l10n.UpsideDownTranslate
-import org.jackhuang.hmcl.gradle.pack.CreateDeb
-import org.jackhuang.hmcl.gradle.pack.ReleaseType
-import org.jackhuang.hmcl.gradle.utils.PropertiesUtils
-import org.jackhuang.hmcl.gradle.utils.OfficialBuildValueSource
+import com.ddjyx.neohmcl.gradle.TerracottaConfigUpgradeTask
+import com.ddjyx.neohmcl.gradle.addon.FormatJsonFile
+import com.ddjyx.neohmcl.gradle.addon.UpdateAddonProjectInfos
+import com.ddjyx.neohmcl.gradle.ci.GitHubActionUtils
+import com.ddjyx.neohmcl.gradle.ci.JenkinsUtils
+import com.ddjyx.neohmcl.gradle.l10n.CheckTranslations
+import com.ddjyx.neohmcl.gradle.l10n.CreateLanguageList
+import com.ddjyx.neohmcl.gradle.l10n.CreateLocaleNamesResourceBundle
+import com.ddjyx.neohmcl.gradle.l10n.SyncTranslations
+import com.ddjyx.neohmcl.gradle.l10n.UpsideDownTranslate
+import com.ddjyx.neohmcl.gradle.pack.CreateDeb
+import com.ddjyx.neohmcl.gradle.pack.ReleaseType
+import com.ddjyx.neohmcl.gradle.utils.PropertiesUtils
+import com.ddjyx.neohmcl.gradle.utils.OfficialBuildValueSource
 import java.net.URI
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -126,7 +126,7 @@ tasks.withType<JavaCompile> {
 
 tasks.checkstyleMain {
     // Third-party code is not checked
-    exclude("**/org/jackhuang/hmcl/image/apng/**")
+    exclude("**/com/ddjyx/neohmcl/image/apng/**")
 }
 
 val addOpens = listOf(
@@ -213,7 +213,7 @@ tasks.shadowJar {
     manifest.attributes(
         "Created-By" to "Copyright(c) 2013-2026 The HMCL Authors",
         "Implementation-Version" to project.version.toString(),
-        "Main-Class" to "org.jackhuang.hmcl.Main",
+        "Main-Class" to "com.ddjyx.neohmcl.Main",
         "Multi-Release" to "true",
         "Add-Opens" to addOpens.joinToString(" "),
         "Enable-Native-Access" to "ALL-UNNAMED",
@@ -297,7 +297,7 @@ val makeDeb = tasks.register("makeDeb", CreateDeb::class) {
 
     version.set(project.version.toString())
     releaseType.set(debChannel)
-    launcherClassName.set("org.jackhuang.hmcl.Launcher")
+    launcherClassName.set("com.ddjyx.neohmcl.Launcher")
     appShFile.set(layout.file(provider { artifactFile("sh") }))
     iconFile.set(layout.projectDirectory.file("image/hmcl.png"))
     outputFile.set(debFile)

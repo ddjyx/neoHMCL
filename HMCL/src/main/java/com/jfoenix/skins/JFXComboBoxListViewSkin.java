@@ -29,7 +29,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.util.Duration;
-import org.jackhuang.hmcl.ui.ScrollUtils;
+import com.ddjyx.neohmcl.ui.ScrollUtils;
 
 import java.util.List;
 

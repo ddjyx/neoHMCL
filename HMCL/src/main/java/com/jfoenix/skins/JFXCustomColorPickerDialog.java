@@ -41,14 +41,14 @@ import javafx.scene.paint.Color;
 import javafx.stage.*;
 import javafx.util.Duration;
 import org.glavo.monetfx.ColorScheme;
-import org.jackhuang.hmcl.setting.StyleSheets;
-import org.jackhuang.hmcl.theme.Themes;
-import org.jackhuang.hmcl.util.StringUtils;
+import com.ddjyx.neohmcl.setting.StyleSheets;
+import com.ddjyx.neohmcl.theme.Themes;
+import com.ddjyx.neohmcl.util.StringUtils;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
-import static org.jackhuang.hmcl.util.i18n.I18n.i18n;
+import static com.ddjyx.neohmcl.util.i18n.I18n.i18n;
 
 /**
  * @author Shadi Shaheen

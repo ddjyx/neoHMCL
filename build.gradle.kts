@@ -1,7 +1,7 @@
-import org.jackhuang.hmcl.gradle.ci.CheckUpdate
-import org.jackhuang.hmcl.gradle.docs.UpdateDocuments
-import org.jackhuang.hmcl.gradle.l10n.UpdateLanguageSubtagRegistry
-import org.jackhuang.hmcl.gradle.l10n.UpdateTimeZoneRegions
+import com.ddjyx.neohmcl.gradle.ci.CheckUpdate
+import com.ddjyx.neohmcl.gradle.docs.UpdateDocuments
+import com.ddjyx.neohmcl.gradle.l10n.UpdateLanguageSubtagRegistry
+import com.ddjyx.neohmcl.gradle.l10n.UpdateTimeZoneRegions
 
 plugins {
     id("checkstyle")
@@ -77,7 +77,7 @@ subprojects {
     }
 }
 
-org.jackhuang.hmcl.gradle.javafx.JavaFXUtils.register(rootProject)
+com.ddjyx.neohmcl.gradle.javafx.JavaFXUtils.register(rootProject)
 
 defaultTasks("clean", "build")
 

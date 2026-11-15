@@ -28,11 +28,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
-import org.jackhuang.hmcl.setting.LauncherSettings;
-import org.jackhuang.hmcl.setting.SettingsManager;
-import org.jackhuang.hmcl.ui.animation.AnimationUtils;
-import org.jackhuang.hmcl.ui.construct.LineInheritableSwitch;
-import org.jackhuang.hmcl.ui.construct.LineSwitch;
+import com.ddjyx.neohmcl.setting.LauncherSettings;
+import com.ddjyx.neohmcl.setting.SettingsManager;
+import com.ddjyx.neohmcl.ui.animation.AnimationUtils;
+import com.ddjyx.neohmcl.ui.construct.LineInheritableSwitch;
+import com.ddjyx.neohmcl.ui.construct.LineSwitch;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -58,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /// Exercises the switch through a live JavaFX scene, including CSS and inherited behavior.
 @NotNullByDefault
-@EnabledIf("org.jackhuang.hmcl.JavaFXLauncher#isStarted")
+@EnabledIf("com.ddjyx.neohmcl.JavaFXLauncher#isStarted")
 @Isolated("Temporarily supplies settings while initializing the cached animation policy")
 public final class JFXSwitchTest {
 

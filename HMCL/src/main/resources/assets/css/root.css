@@ -1023,7 +1023,7 @@
 }
 
 .jfx-list-view .scroll-bar {
-    -fx-skin: "org.jackhuang.hmcl.ui.construct.FloatScrollBarSkin";
+    -fx-skin: "com.ddjyx.neohmcl.ui.construct.FloatScrollBarSkin";
 }
 
 .jfx-list-view .scroll-bar .track {
@@ -1734,7 +1734,7 @@
 }
 
 .table-view > .virtual-flow > .scroll-bar {
-    -fx-skin: "org.jackhuang.hmcl.ui.construct.FloatScrollBarSkin";
+    -fx-skin: "com.ddjyx.neohmcl.ui.construct.FloatScrollBarSkin";
 }
 
 .table-view > .virtual-flow > .scroll-bar .track {
@@ -1776,7 +1776,7 @@
 }
 
 .tree-view > .virtual-flow > .scroll-bar {
-    -fx-skin: "org.jackhuang.hmcl.ui.construct.FloatScrollBarSkin";
+    -fx-skin: "com.ddjyx.neohmcl.ui.construct.FloatScrollBarSkin";
 }
 
 .tree-view > .virtual-flow > .scroll-bar .track {
@@ -1852,7 +1852,7 @@
 }
 
 .jfx-combo-box .scroll-bar {
-    -fx-skin: "org.jackhuang.hmcl.ui.construct.FloatScrollBarSkin";
+    -fx-skin: "com.ddjyx.neohmcl.ui.construct.FloatScrollBarSkin";
 }
 
 .jfx-combo-box .scroll-bar .track {
@@ -1885,7 +1885,7 @@
 }
 
 .scroll-pane .scroll-bar {
-    -fx-skin: "org.jackhuang.hmcl.ui.construct.FloatScrollBarSkin";
+    -fx-skin: "com.ddjyx.neohmcl.ui.construct.FloatScrollBarSkin";
 }
 
 .scroll-pane .scroll-bar .track {

@@ -56,14 +56,14 @@ tasks.processResources {
     }
 }
 
-tasks.register("updateClientSha1", org.jackhuang.hmcl.gradle.component.UpdateClientSha1::class) {
+tasks.register("updateClientSha1", com.ddjyx.neohmcl.gradle.component.UpdateClientSha1::class) {
     description = "Update the embedded Minecraft client SHA-1 table"
 
     unlistedVersionsFile.set(layout.projectDirectory.file("src/main/resources/assets/game/unlisted-versions.json"))
     outputFile.set(layout.projectDirectory.file("src/main/resources/assets/game/client-sha1.csv"))
 }
 
-tasks.register("updateLiteLoaderVersionList", org.jackhuang.hmcl.gradle.component.UpdateLiteLoaderVersionList::class) {
+tasks.register("updateLiteLoaderVersionList", com.ddjyx.neohmcl.gradle.component.UpdateLiteLoaderVersionList::class) {
     description = "Update LiteLoader version list"
 
     outputFile.set(projectDir.resolve("src/main/resources/assets/liteloader/versions.json"))

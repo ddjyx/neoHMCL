@@ -36,8 +36,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Scale;
 import javafx.util.Duration;
-import org.jackhuang.hmcl.ui.animation.AnimationUtils;
-import org.jackhuang.hmcl.ui.animation.Motion;
+import com.ddjyx.neohmcl.ui.animation.AnimationUtils;
+import com.ddjyx.neohmcl.ui.animation.Motion;
 
 /// # Material Design Popup Skin
 /// TODO: REWORK

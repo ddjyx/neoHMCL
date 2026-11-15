@@ -1,0 +1,112 @@
+// SPDX-FileCopyrightText: Copyright (C) 2021 The HMCL Authors
+// SPDX-License-Identifier: GPL-3.0-or-later WITH AdditionRef-HMCL
+package com.ddjyx.neohmcl.download.game;
+
+import org.glavo.url.WebURL;
+import com.ddjyx.neohmcl.download.*;
+import com.ddjyx.neohmcl.game.GameComponentType;
+import com.ddjyx.neohmcl.game.GameInstanceManifest;
+import com.ddjyx.neohmcl.game.GameInstancePatch;
+import com.ddjyx.neohmcl.game.ReleaseType;
+import com.ddjyx.neohmcl.task.GetTask;
+import com.ddjyx.neohmcl.task.Task;
+import com.ddjyx.neohmcl.util.Immutable;
+import com.ddjyx.neohmcl.util.gson.JsonUtils;
+import com.ddjyx.neohmcl.util.versioning.GameVersionNumber;
+import org.jetbrains.annotations.NotNullByDefault;
+
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.file.Path;
+import java.time.Instant;
+import java.util.List;
+import java.util.TreeSet;
+
+import static com.ddjyx.neohmcl.util.logging.Logger.LOG;
+
+/// @author huangyuhui
+@Immutable
+@NotNullByDefault
+public final class GameRemoteVersion extends ComponentRemoteVersion {
+
+    public static final WebURL VERSION_MANIFEST_URL = WebURL.parse("https://piston-meta.mojang.com/mc/game/version_manifest.json");
+
+    public static Task<ComponentRemoteVersionList<GameRemoteVersion>> fetchAsync(DownloadProvider provider) {
+        return new GetTask(provider.getGameVersionListCandidates())
+                .thenApplyAsync(json -> {
+                    GameRemoteVersions root = JsonUtils.fromNonNullJson(json, GameRemoteVersions.class);
+
+                    GameRemoteVersions unlistedVersions = null;
+
+                    //noinspection DataFlowIssue
+                    try (Reader input = new InputStreamReader(
+                            GameRemoteVersion.class.getResourceAsStream("/assets/game/unlisted-versions.json"))) {
+                        unlistedVersions = JsonUtils.GSON.fromJson(input, GameRemoteVersions.class);
+                    } catch (Throwable e) {
+                        LOG.warning("Failed to load unlisted versions", e);
+                    }
+
+                    var versions = new TreeSet<GameRemoteVersion>();
+
+                    if (unlistedVersions != null) {
+                        for (GameRemoteVersionInfo unlistedVersion : unlistedVersions.versions()) {
+                            versions.add(new GameRemoteVersion(
+                                    GameVersionNumber.asGameVersion(unlistedVersion.gameVersion()),
+                                    List.of(unlistedVersion.url()),
+                                    unlistedVersion.type(), unlistedVersion.releaseTime()));
+                        }
+                    }
+
+                    for (GameRemoteVersionInfo remoteVersion : root.versions()) {
+                        versions.add(new GameRemoteVersion(
+                                GameVersionNumber.asGameVersion(remoteVersion.gameVersion()),
+                                List.of(remoteVersion.url()),
+                                remoteVersion.type(), remoteVersion.releaseTime()));
+                    }
+
+                    return ComponentRemoteVersionList.of(GameComponentType.GAME, versions);
+                });
+    }
+
+    private final ReleaseType type;
+
+    public GameRemoteVersion(GameVersionNumber gameVersion, List<String> url, ReleaseType type, Instant releaseDate) {
+        super(GameComponentType.GAME, gameVersion, gameVersion.toString(), releaseDate, getReleaseType(type), url);
+        this.type = type;
+    }
+
+    public ReleaseType getType() {
+        return type;
+    }
+
+    @Override
+    public Task<GameInstancePatch> getInstallTask(DefaultDependencyManager dependencyManager, GameInstanceManifest baseManifest, Path modsDirectory) {
+        return new GameInstallTask(dependencyManager, baseManifest, this);
+    }
+
+    @Override
+    public int compareTo(ComponentRemoteVersion o) {
+        if (!(o instanceof GameRemoteVersion)) {
+            return this.getComponentType().compareTo(o.getComponentType());
+        }
+
+        int dateCompare = o.getReleaseDate().compareTo(getReleaseDate());
+        if (dateCompare != 0) {
+            return dateCompare;
+        }
+
+        return o.getGameVersion().compareTo(getGameVersion());
+    }
+
+    private static Type getReleaseType(ReleaseType type) {
+        if (type == null) return Type.UNCATEGORIZED;
+        return switch (type) {
+            case RELEASE -> Type.RELEASE;
+            case SNAPSHOT -> Type.SNAPSHOT;
+            case UNKNOWN -> Type.UNCATEGORIZED;
+            case PENDING -> Type.PENDING;
+            case UNOBFUSCATED -> Type.UNOBFUSCATED;
+            default -> Type.OLD;
+        };
+    }
+}

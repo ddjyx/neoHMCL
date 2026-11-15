@@ -19,15 +19,15 @@ import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import org.jackhuang.hmcl.ui.SVG;
-import org.jackhuang.hmcl.ui.construct.DialogCloseEvent;
-import org.jackhuang.hmcl.ui.construct.RipplerContainer;
+import com.ddjyx.neohmcl.ui.SVG;
+import com.ddjyx.neohmcl.ui.construct.DialogCloseEvent;
+import com.ddjyx.neohmcl.ui.construct.RipplerContainer;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Stack;
 
-import static org.jackhuang.hmcl.util.logging.Logger.LOG;
+import static com.ddjyx.neohmcl.util.logging.Logger.LOG;
 
 public class JFXDatePickerSkin extends DatePickerSkin {
     public static final String PROPERTY_DATE_PICKER_CONTENTS = JFXDatePicker.class.getName() + ".dialog.contents";

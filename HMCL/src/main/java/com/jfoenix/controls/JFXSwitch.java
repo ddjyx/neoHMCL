@@ -22,7 +22,7 @@ import javafx.scene.AccessibleAttribute;
 import javafx.scene.AccessibleRole;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
-import org.jackhuang.hmcl.ui.animation.AnimationUtils;
+import com.ddjyx.neohmcl.ui.animation.AnimationUtils;
 import org.jetbrains.annotations.NotNullByDefault;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;

@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jackhuang.hmcl.ui.FXUtils.useJFXContextMenu;
+import static com.ddjyx.neohmcl.ui.FXUtils.useJFXContextMenu;
 
 /**
  * JFXPasswordField is the material design implementation of a password Field.

@@ -23,9 +23,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
-import org.jackhuang.hmcl.theme.Themes;
-import org.jackhuang.hmcl.ui.FXUtils;
-import org.jackhuang.hmcl.ui.animation.AnimationUtils;
+import com.ddjyx.neohmcl.theme.Themes;
+import com.ddjyx.neohmcl.ui.FXUtils;
+import com.ddjyx.neohmcl.ui.animation.AnimationUtils;
 
 public class JFXCheckBoxSkin extends CheckBoxSkin {
     private final StackPane box = new StackPane();

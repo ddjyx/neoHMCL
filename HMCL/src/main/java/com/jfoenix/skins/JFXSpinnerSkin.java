@@ -34,7 +34,7 @@ import javafx.scene.shape.Arc;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.util.Duration;
-import org.jackhuang.hmcl.ui.animation.AnimationUtils;
+import com.ddjyx.neohmcl.ui.animation.AnimationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
