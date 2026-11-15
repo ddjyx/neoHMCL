@@ -56,7 +56,7 @@ public final class AboutPage extends SpinnerPane {
             var launcher = LineButton.createExternalLinkButton(Metadata.REPOSITORY_URL);
             launcher.setLargeTitle(true);
             launcher.setLeading(FXUtils.newBuiltinImage("/assets/img/icon.png"));
-            launcher.setTitle("Hello Minecraft! Launcher");
+            launcher.setTitle("neoHMCL");
             launcher.setSubtitle(Metadata.VERSION);
 
             about.getContent().setAll(launcher);
@@ -235,7 +235,7 @@ public final class AboutPage extends SpinnerPane {
             claim.setTitle(i18n("about.claim"));
             claim.setSubtitle(i18n("about.claim.statement"));
 
-            var openSource = LineButton.createExternalLinkButton("https://github.com/HMCL-dev/HMCL");
+            var openSource = LineButton.createExternalLinkButton("https://github.com/ddjyx/neoHMCL");
             openSource.setLargeTitle(true);
             openSource.setTitle(i18n("about.open_source"));
             openSource.setSubtitle(i18n("about.open_source.statement"));

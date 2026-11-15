@@ -1,11 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: QQ 群 | QQ Group
-    url: https://docs.hmcl.net/groups.html
-    about: Hello Minecraft! Launcher 的官方 QQ 交流群。| The official QQ group of Hello Minecraft! Launcher.
-  - name: Discord 服务器 | Discord Server
-    url: https://discord.gg/jVvC7HfM6U
-    about: Hello Minecraft! Launcher 的官方 Discord 服务器。| The official Discord server of Hello Minecraft! Launcher.
-  - name: 其他反馈 | Others
-    url: https://github.com/HMCL-dev/HMCL/discussions/new/choose
+  - name: 讨论区 | Discussions
+    url: https://github.com/ddjyx/neoHMCL/discussions
     about: 通过 Discussions 反馈其他问题。| Report other problems in Discussions.
+  - name: 上游项目 HMCL | Upstream HMCL
+    url: https://github.com/HMCL-dev/HMCL
+    about: neoHMCL 基于 HMCL 开发，请勿将 neoHMCL 的问题提交到上游仓库。| neoHMCL is based on HMCL. Do not report neoHMCL issues upstream.

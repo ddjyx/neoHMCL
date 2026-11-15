@@ -218,8 +218,8 @@ public abstract class CreateDeb extends DefaultTask {
                 Architecture: all
                 Installed-Size: %d
                 Maintainer: Glavo <zjx001202@gmail.com>
-                Description: Hello Minecraft! Launcher
-                Homepage: https://github.com/HMCL-dev/HMCL
+                Description: neoHMCL
+                Homepage: https://github.com/ddjyx/neoHMCL
                 """.formatted(getCurrentType().getPackageName(), getVersion().get(), Math.max(installedSize, 1)) + "\n";
     }
 
@@ -277,7 +277,7 @@ public abstract class CreateDeb extends DefaultTask {
                 [Desktop Entry]
                 Type=Application
                 Name=%s
-                Comment=Hello Minecraft! Launcher
+                Comment=neoHMCL
                 Exec=%s
                 Icon=%s
                 Terminal=false
