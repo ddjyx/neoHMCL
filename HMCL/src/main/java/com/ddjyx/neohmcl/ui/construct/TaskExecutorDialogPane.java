@@ -61,6 +61,8 @@ public class TaskExecutorDialogPane extends BorderPane implements DialogAware {
     /// Keeps the weakly registered speed listener alive while this pane is retained.
     @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final Consumer<FetchTask.SpeedEvent> speedEventHandler;
+    /// The latest aggregate download speed text.
+    private String downloadSpeedText = "";
 
     /// The displayed task title.
     private final Label lblTitle;
@@ -103,6 +105,7 @@ public class TaskExecutorDialogPane extends BorderPane implements DialogAware {
             header.setAlignment(Pos.CENTER_LEFT);
 
             taskListPane = new TaskListPane();
+            taskListPane.totalProgressProperty().addListener((observable, oldValue, newValue) -> updateProgressLabel());
             VBox.setVgrow(taskListPane, Priority.ALWAYS);
 
             center.getChildren().setAll(header, taskListPane);
@@ -137,12 +140,29 @@ public class TaskExecutorDialogPane extends BorderPane implements DialogAware {
         speedEventHandler = FetchTask.SPEED_EVENT.registerWeak(speedEvent -> {
             String message = I18n.formatSpeed(speedEvent.getSpeed());
             Platform.runLater(() -> {
-                if (!queued.get())
-                    lblProgress.setText(message);
+                if (!queued.get()) {
+                    downloadSpeedText = message;
+                    updateProgressLabel();
+                }
             });
         });
 
         onEscPressed(this, btnCancel::fire);
+    }
+
+    /// Updates the footer with aggregate task progress and the current speed.
+    private void updateProgressLabel() {
+        if (queued.get()) {
+            lblProgress.setText("");
+            return;
+        }
+        double progress = taskListPane.totalProgressProperty().get();
+        String total = progress >= 0
+                ? i18n("task.total_progress", progress * 100)
+                : "";
+        lblProgress.setText(total.isEmpty() || downloadSpeedText.isEmpty()
+                ? total + downloadSpeedText
+                : total + " · " + downloadSpeedText);
     }
 
     /// Attaches an executor before submitting it with [#startExecutor()] and closes the dialog when it stops.
@@ -186,7 +206,8 @@ public class TaskExecutorDialogPane extends BorderPane implements DialogAware {
                             return;
                         running = true;
                         queued.set(false);
-                        lblProgress.setText("");
+                        downloadSpeedText = "";
+                        updateProgressLabel();
                         TaskManager.getInstance().register(TaskExecutorDialogPane.this);
                         updateButtons();
                     });

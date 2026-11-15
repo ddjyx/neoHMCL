@@ -33,6 +33,7 @@ import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Locale;
 
 import static com.ddjyx.neohmcl.ui.FXUtils.runInFX;
 import static com.ddjyx.neohmcl.util.Lang.tryCast;
@@ -46,6 +47,7 @@ public final class TaskListPane extends StackPane {
     private final JFXListView<Node> listView = new JFXListView<>();
     private final Map<Task<?>, ProgressListNode> nodes = new HashMap<>();
     private final Map<String, StageNode> stageNodes = new HashMap<>();
+    private final ReadOnlyDoubleWrapper totalProgress = new ReadOnlyDoubleWrapper(this, "totalProgress", -1);
     private final ObjectProperty<Insets> progressNodePadding = new SimpleObjectProperty<>(Insets.EMPTY);
     private final DoubleProperty cellWidth = new SimpleDoubleProperty();
 
@@ -59,6 +61,24 @@ public final class TaskListPane extends StackPane {
         });
 
         getChildren().setAll(listView);
+    }
+
+    /// Returns the aggregate progress of visible tasks, or -1 when no task has a known progress.
+    public ReadOnlyDoubleProperty totalProgressProperty() {
+        return totalProgress.getReadOnlyProperty();
+    }
+
+    private void updateTotalProgress() {
+        double sum = 0;
+        int count = 0;
+        for (ProgressListNode node : nodes.values()) {
+            double value = node.progress.get();
+            if (value >= 0 && value <= 1) {
+                sum += value;
+                count++;
+            }
+        }
+        totalProgress.set(count == 0 ? -1 : sum / count);
     }
 
     @FXThread
@@ -131,6 +151,8 @@ public final class TaskListPane extends StackPane {
                 Platform.runLater(() -> {
                     ProgressListNode node = new ProgressListNode(task);
                     nodes.put(task, node);
+                    node.progress.addListener(observable -> updateTotalProgress());
+                    updateTotalProgress();
                     StageNode stageNode = stageNodes.get(task.getInheritedStage());
                     listView.getItems().add(listView.getItems().indexOf(stageNode) + 1, node);
                 });
@@ -149,6 +171,7 @@ public final class TaskListPane extends StackPane {
                     if (node != null) {
                         node.unbind();
                         listView.getItems().remove(node);
+                        updateTotalProgress();
                     }
                 });
             }
@@ -419,11 +442,17 @@ public final class TaskListPane extends StackPane {
     private static final class ProgressListNode extends Node {
         private final String title;
         private final StringProperty message = new SimpleStringProperty("");
-        private final DoubleProperty progress = new SimpleDoubleProperty(0.0);
+                private final DoubleProperty progress = new SimpleDoubleProperty(0.0);
 
         private ProgressListNode(Task<?> task) {
             this.title = task.getName();
             progress.bind(task.progressProperty());
+            message.bind(Bindings.createStringBinding(() -> {
+                double value = progress.get();
+                return value >= 0 && value <= 1
+                        ? String.format(Locale.ROOT, "%.1f%%", value * 100)
+                        : "";
+            }, progress));
         }
 
         public void unbind() {
@@ -432,6 +461,7 @@ public final class TaskListPane extends StackPane {
 
         public void setThrowable(Throwable throwable) {
             unbind();
+            message.unbind();
             message.set(throwable.getLocalizedMessage());
             progress.set(0.);
         }
