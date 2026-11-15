@@ -521,7 +521,7 @@ public abstract class FetchTask<T extends @UnknownNullability Object> extends Ta
         throw toDownloadException(url, null, exceptions);
     }
 
-    private static final long PARALLEL_DOWNLOAD_THRESHOLD = 1024L * 1024L;
+    private static final long PARALLEL_DOWNLOAD_THRESHOLD = 200L * 1024L;
     private static volatile int parallelDownloadParts = 4;
 
     /// Sets the number of HTTP byte-range parts used for each large file.
