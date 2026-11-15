@@ -109,6 +109,11 @@ public class FileDownloadTask extends FetchTask<Void> {
         return file;
     }
 
+    @Override
+    protected Path getParallelDownloadTarget() {
+        return file;
+    }
+
     public void setCaching(boolean caching) {
         this.caching = caching;
     }

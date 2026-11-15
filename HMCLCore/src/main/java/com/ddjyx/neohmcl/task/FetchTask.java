@@ -16,9 +16,12 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URLConnection;
 import java.nio.file.Path;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -68,6 +71,15 @@ public abstract class FetchTask<T extends @UnknownNullability Object> extends Ta
     }
 
     protected abstract Context getContext(@Nullable UrlResponseInfo response, boolean checkETag, @Nullable String bmclapiHash) throws IOException;
+
+    /// Returns the destination used by the optional parallel HTTP downloader.
+    ///
+    /// A null value keeps the legacy single-connection behavior. File downloads
+    /// provide their final path so that the normal context can still perform
+    /// checksum verification and atomic replacement after the parts are joined.
+    protected @Nullable Path getParallelDownloadTarget() {
+        return null;
+    }
 
     @Override
     public void execute() throws Exception {
@@ -290,6 +302,16 @@ public abstract class FetchTask<T extends @UnknownNullability Object> extends Ta
             }
         }
 
+        try {
+            if (tryParallelHttpDownload(url, connectTimeout, readTimeout)) {
+                return;
+            }
+        } catch (InterruptedException e) {
+            throw e;
+        } catch (IOException e) {
+            LOG.warning("Parallel download unavailable, falling back to a single connection for " + url, e);
+        }
+
         @Nullable Context context = null;
         @Nullable HttpResumeContext resumeContext = null;
 
@@ -497,6 +519,164 @@ public abstract class FetchTask<T extends @UnknownNullability Object> extends Ta
         }
 
         throw toDownloadException(url, null, exceptions);
+    }
+
+    private static final long PARALLEL_DOWNLOAD_THRESHOLD = 1024L * 1024L;
+    private static final int PARALLEL_DOWNLOAD_PARTS = 4;
+
+    /// Downloads a sufficiently large HTTP file through independent byte ranges.
+    ///
+    /// The method returns false when the server does not advertise a usable
+    /// range response. In that case the caller must use the regular downloader.
+    private boolean tryParallelHttpDownload(WebURL url, Duration connectTimeout,
+                                            Duration readTimeout)
+            throws IOException, InterruptedException {
+        Path target = getParallelDownloadTarget();
+        if (target == null || isCancelled()) {
+            return false;
+        }
+
+        HttpURLConnection probe = NetworkUtils.createHttpConnection(url);
+        probe.setConnectTimeout((int) connectTimeout.toMillis());
+        probe.setReadTimeout((int) readTimeout.toMillis());
+        probe.setRequestProperty("accept-encoding", "identity");
+        probe.setRequestProperty("range", "bytes=0-0");
+        probe.setInstanceFollowRedirects(true);
+
+        long totalLength;
+        try {
+            if (probe.getResponseCode() != HttpURLConnection.HTTP_PARTIAL) {
+                return false;
+            }
+            String contentRange = probe.getHeaderField("Content-Range");
+            if (contentRange == null || !contentRange.matches("bytes 0-0/[0-9]+")) {
+                return false;
+            }
+            totalLength = Long.parseLong(contentRange.substring(contentRange.lastIndexOf('/') + 1));
+            if (totalLength < PARALLEL_DOWNLOAD_THRESHOLD) {
+                return false;
+            }
+        } finally {
+            closeHttpConnection(probe);
+        }
+
+        Path partsDirectory = Files.createTempDirectory("neohmcl-download-");
+        List<Path> parts = new ArrayList<>(PARALLEL_DOWNLOAD_PARTS);
+        List<Future<?>> futures = new ArrayList<>(PARALLEL_DOWNLOAD_PARTS);
+        AtomicLong downloaded = new AtomicLong();
+        long partSize = (totalLength + PARALLEL_DOWNLOAD_PARTS - 1) / PARALLEL_DOWNLOAD_PARTS;
+
+        try {
+            for (int i = 0; i < PARALLEL_DOWNLOAD_PARTS; i++) {
+                long start = i * partSize;
+                long end = Math.min(totalLength - 1, start + partSize - 1);
+                Path part = partsDirectory.resolve(Integer.toString(i));
+                parts.add(part);
+                int partIndex = i;
+                futures.add(Schedulers.io().submit(() -> {
+                    downloadHttpPart(url, connectTimeout, readTimeout, start, end, totalLength, part,
+                            downloaded, partIndex);
+                    return null;
+                }));
+            }
+
+            for (Future<?> future : futures) {
+                try {
+                    future.get();
+                } catch (java.util.concurrent.ExecutionException e) {
+                    Throwable cause = e.getCause();
+                    if (cause instanceof IOException io) {
+                        throw io;
+                    }
+                    if (cause instanceof InterruptedException interrupted) {
+                        throw interrupted;
+                    }
+                    throw new IOException("Parallel download part failed", cause);
+                }
+            }
+
+            Context context = getContext(null, false, null);
+            boolean success = false;
+            try {
+                byte[] buffer = new byte[IOUtils.DEFAULT_BUFFER_SIZE];
+                for (Path part : parts) {
+                    try (InputStream input = Files.newInputStream(part)) {
+                        int length;
+                        while ((length = input.read(buffer)) != -1) {
+                            context.write(buffer, 0, length);
+                        }
+                    }
+                }
+                context.withResult(true);
+                success = true;
+            } finally {
+                if (!success) {
+                    context.withResult(false);
+                }
+                context.close();
+            }
+            return true;
+        } finally {
+            for (Future<?> future : futures) {
+                if (!future.isDone()) {
+                    future.cancel(true);
+                }
+            }
+            for (Path part : parts) {
+                Files.deleteIfExists(part);
+            }
+            Files.deleteIfExists(partsDirectory);
+        }
+    }
+
+    /// Downloads and validates one byte range into its private temporary file.
+    private void downloadHttpPart(WebURL url, Duration connectTimeout, Duration readTimeout,
+                                  long start, long end, long totalLength, Path part,
+                                  AtomicLong downloaded, int partIndex)
+            throws IOException, InterruptedException {
+        if (isCancelled()) {
+            throw new InterruptedException();
+        }
+        HttpURLConnection connection = NetworkUtils.createHttpConnection(url);
+        connection.setConnectTimeout((int) connectTimeout.toMillis());
+        connection.setReadTimeout((int) readTimeout.toMillis());
+        connection.setRequestProperty("accept-encoding", "identity");
+        connection.setRequestProperty("range", "bytes=" + start + "-" + end);
+        connection.setInstanceFollowRedirects(true);
+        try {
+            if (connection.getResponseCode() != HttpURLConnection.HTTP_PARTIAL) {
+                throw new IOException("Server rejected byte range " + start + "-" + end);
+            }
+            long expected = end - start + 1;
+            long contentLength = connection.getContentLengthLong();
+            if (contentLength != expected) {
+                throw new IOException("Unexpected range size for part " + partIndex + ": "
+                        + contentLength + ", expected " + expected);
+            }
+            try (InputStream input = connection.getInputStream();
+                 OutputStream output = Files.newOutputStream(part, StandardOpenOption.CREATE_NEW)) {
+                byte[] buffer = new byte[IOUtils.DEFAULT_BUFFER_SIZE];
+                long received = 0;
+                int length;
+                while ((length = input.read(buffer)) != -1) {
+                    if (isCancelled()) {
+                        throw new InterruptedException();
+                    }
+                    output.write(buffer, 0, length);
+                    received += length;
+                    long current = downloaded.addAndGet(length);
+                    synchronized (this) {
+                        updateProgress(current, totalLength);
+                    }
+                    updateDownloadSpeed(length);
+                }
+                if (received != expected) {
+                    throw new IOException("Incomplete range " + start + "-" + end);
+                }
+            }
+        } finally {
+            closeHttpConnection(connection);
+        }
     }
 
     /// Disconnects an HTTP URL connection whose response body will not be consumed.
