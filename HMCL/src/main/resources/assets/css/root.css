@@ -37,9 +37,9 @@
 }
 
 .hint {
-    -fx-background-radius: 5;
+    -fx-background-radius: 8;
     -fx-border-width: 1;
-    -fx-border-radius: 5;
+    -fx-border-radius: 8;
     -fx-padding: 6;
 }
 
@@ -395,12 +395,12 @@
 
 .installer-item-wrapper {
     -fx-background-color: -monet-surface;
-    -fx-background-radius: 4;
+    -fx-background-radius: 12px;
     -fx-pref-width: 180px;
 }
 
 .installer-item-wrapper:card {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.26), 10, 0.12, -1, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 10, 0.12, -1, 2);
 }
 
 .installer-item-wrapper .installer-item:list-item {
@@ -534,7 +534,7 @@
 }
 
 .jfx-dialog-layout {
-    -fx-background-radius: 4px;
+    -fx-background-radius: 16px;
     -fx-padding: 24px 24px 16px 24px;
     -fx-background-color: -monet-surface-container-high;
     -fx-text-fill: -monet-on-surface;
@@ -665,7 +665,7 @@
  ******************************************************************************/
 
 .icon {
-    -fx-fill: #FE774D;
+    -fx-fill: -monet-on-surface;
     -fx-padding: 10.0;
     -fx-cursor: hand;
 }
@@ -879,6 +879,7 @@
 
 .jfx-button-raised {
     -fx-background-color: -monet-primary;
+    -fx-background-radius: 8px;
 }
 
 .jfx-button-raised .jfx-rippler {
@@ -895,9 +896,9 @@
 .jfx-button-border {
     -fx-background-color: transparent;
     -fx-border-color: -monet-outline;
-    -fx-border-radius: 5px;
-    -fx-border-width: 0.2px;
-    -fx-padding: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-padding: 8px 14px;
 }
 
 .jfx-button-border, .jfx-button-border * {
@@ -960,6 +961,7 @@
 
 .jfx-text-field, .jfx-password-field, .jfx-text-area {
     -fx-background-color: -monet-surface-container-highest;
+    -fx-background-radius: 8px;
     -fx-highlight-fill: -monet-primary;
     -fx-text-fill: -monet-on-surface;
     -fx-font-weight: BOLD;
@@ -1048,7 +1050,7 @@
 
 .options-list {
     -fx-background-color: transparent;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.26), 5, 0.06, -0.5, 1);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 5, 0.06, -0.5, 1);
 }
 
 .depth-0 {
@@ -1056,23 +1058,23 @@
 }
 
 .depth-1 {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.26), 10, 0.12, -1, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 10, 0.12, -1, 2);
 }
 
 .depth-2 {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.26), 15, 0.16, 0, 4);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 15, 0.16, 0, 4);
 }
 
 .depth-3 {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.26), 20, 0.19, 0, 6);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 20, 0.19, 0, 6);
 }
 
 .depth-4 {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.26), 25, 0.25, 0, 8);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 25, 0.25, 0, 8);
 }
 
 .depth-5 {
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.26), 30, 0.3, 0, 10);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 30, 0.3, 0, 10);
 }
 
 .padding-8 {
@@ -1081,30 +1083,30 @@
 
 .card {
     -fx-background-color: -monet-surface-container-low-transparent-80;
-    -fx-background-radius: 4;
-    -fx-padding: 8px;
+    -fx-background-radius: 12px;
+    -fx-padding: 16px;
 
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.26), 10, 0.12, -1, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 12, 0.10, -1, 2);
 }
 
 .card-no-padding {
     -fx-background-color: -monet-surface-container-low-transparent-80;
-    -fx-background-radius: 4;
+    -fx-background-radius: 12px;
 
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.26), 10, 0.12, -1, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 12, 0.10, -1, 2);
 }
 
 .card-non-transparent {
     -fx-background-color: -monet-surface-container-low;
-    -fx-background-radius: 4;
-    -fx-padding: 8px;
+    -fx-background-radius: 12px;
+    -fx-padding: 16px;
 
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.26), 5, 0.06, -0.5, 1);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 8, 0.08, -0.5, 1);
 }
 
 .card-list {
-    -fx-padding: 10;
-    -fx-spacing: 10;
+    -fx-padding: 16;
+    -fx-spacing: 16;
 }
 
 .md-list-cell {
@@ -1606,12 +1608,12 @@
 }
 
 .jfx-combo-box-warning {
-    -jfx-focus-color: #D34336;
-    -jfx-unfocus-color: #D34336;
+    -jfx-focus-color: -monet-error;
+    -jfx-unfocus-color: -monet-error;
 }
 
 .jfx-combo-box-warning .text {
-    -fx-fill: #D34336;
+    -fx-fill: -monet-error;
 }
 
 /*.combo-box-popup .list-view .jfx-list-cell .jfx-rippler {*/
@@ -1821,12 +1823,12 @@
  ******************************************************************************/
 
 .scroll-bar:vertical > .track-background, .scroll-bar:horizontal > .track-background {
-    -fx-background-color: #F1F1F1;
+    -fx-background-color: -monet-surface-container-low;
     -fx-background-insets: 0.0;
 }
 
 .scroll-bar:vertical .thumb, .scroll-bar:horizontal .thumb {
-    -fx-background-color: #BCBCBC;
+    -fx-background-color: -monet-outline-variant;
     -fx-background-insets: 0.0;
     -fx-background-radius: 1.0;
 }
