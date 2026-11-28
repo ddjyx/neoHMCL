@@ -29,7 +29,6 @@ jobs:
           - macos-latest
 
     env:
-      VERSION_ROOT: '3'
       VERSION_TYPE: stable
       MICROSOFT_AUTH_ID: ${{ secrets.MICROSOFT_AUTH_ID }}
 
