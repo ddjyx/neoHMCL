@@ -94,6 +94,11 @@ public class LauncherSettingsPage extends DecoratorAnimatedPage implements Decor
         tabController.selectTab(gameTab, false);
     }
 
+    /// Shows the launcher appearance tab without changing the selected game preset.
+    public void showPersonalization() {
+        tabController.selectTab(personalizationTab, false);
+    }
+
     public void showFeedback() {
         tabController.selectTab(feedbackTab, false);
     }

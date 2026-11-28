@@ -250,6 +250,15 @@ public final class LauncherSettings extends ObservableSetting implements JsonSch
 
     // UI
 
+    /// The selected launcher home layout, independent of the active color theme.
+    @SerializedName("uiLayout")
+    private final ObjectProperty<LauncherLayout> uiLayout = new RawPreservingObjectProperty<>(LauncherLayout.PCL);
+
+    /// Returns the launcher home-layout property.
+    public ObjectProperty<LauncherLayout> uiLayoutProperty() {
+        return uiLayout;
+    }
+
     // Theme selection
 
     /// The installed theme selected by the launcher, or `null` when older settings do not contain a theme reference.

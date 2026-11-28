@@ -39,6 +39,7 @@ import com.ddjyx.neohmcl.ui.construct.MessageDialogPane.MessageType;
 import com.ddjyx.neohmcl.ui.decorator.Decorator;
 import com.ddjyx.neohmcl.ui.download.DownloadPage;
 import com.ddjyx.neohmcl.ui.main.LauncherSettingsPage;
+import com.ddjyx.neohmcl.ui.main.NeoHmclRootPage;
 import com.ddjyx.neohmcl.ui.main.RootPage;
 import com.ddjyx.neohmcl.ui.terracotta.TerracottaPage;
 import com.ddjyx.neohmcl.ui.instances.GameListPage;
@@ -180,13 +181,42 @@ public final class Controllers {
     /// The cached root page.
     private static @Nullable RootPage rootPage;
 
-    /// Returns the cached root page, creating it if necessary.
+    /// Returns the cached classic root page, creating it if necessary.
     @FXThread
     public static RootPage getRootPage() {
         if (rootPage == null) {
             rootPage = new RootPage();
         }
         return rootPage;
+    }
+
+    /// The cached neoHMCL root page sharing the classic home content.
+    private static @Nullable NeoHmclRootPage neoHmclRootPage;
+
+    /// Returns the home page for the persisted layout selection.
+    private static Node getHomePage() {
+        if (Objects.requireNonNullElse(settings().uiLayoutProperty().get(), LauncherLayout.PCL) == LauncherLayout.PCL) {
+            if (neoHmclRootPage == null) {
+                neoHmclRootPage = new NeoHmclRootPage(getRootPage().getMainPage());
+            }
+            return neoHmclRootPage;
+        }
+        return getRootPage();
+    }
+
+    /// Applies the selected home layout without rebuilding the decorator or shared pages.
+    @FXThread
+    public static void applyLauncherLayout() {
+        if (decorator == null) {
+            return;
+        }
+        decorator.showHome(getHomePage());
+    }
+
+    /// Returns to the currently selected home page.
+    @FXThread
+    public static void navigateHome() {
+        applyLauncherLayout();
     }
 
     /// The cached settings page.
@@ -309,7 +339,7 @@ public final class Controllers {
 
         configureMainStage(stage);
 
-        decorator = new Decorator(getRootPage(), Controllers::configureMainStage);
+        decorator = new Decorator(getHomePage(), Controllers::configureMainStage);
         Scene mainScene = decorator.attachStage(stage);
         getRootPage().getMainPage().showUpdateProperty().bind(UpdateChecker.checkingUpdateProperty().not().and(UpdateChecker.outdatedProperty()));
         getRootPage().getMainPage().showUpdateDialogProperty().bind(
@@ -327,6 +357,7 @@ public final class Controllers {
         Lang.thread(JavaManager::initialize, "Search Java", true);
 
         StyleSheets.init(mainScene);
+        settings().uiLayoutProperty().addListener(observable -> applyLauncherLayout());
 
         if (!Architecture.SYSTEM_ARCH.isX86() && SettingsManager.userState().platformPromptVersionProperty().get() < 1) {
             Runnable continueAction = () -> {
@@ -776,6 +807,7 @@ public final class Controllers {
     public static void shutdown() {
         onApplicationStop();
         rootPage = null;
+        neoHmclRootPage = null;
         gameInstancePage = null;
         gameListPage = null;
         downloadPage = null;

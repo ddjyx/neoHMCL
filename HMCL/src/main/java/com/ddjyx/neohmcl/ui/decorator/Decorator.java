@@ -349,6 +349,16 @@ public final class Decorator {
         return navigator.backableProperty();
     }
 
+    /// Returns to the supplied home page while retaining the existing navigation root.
+    ///
+    /// @param homePage the home page selected by the launcher layout setting
+    public void showHome(Node homePage) {
+        navigator.clear();
+        if (navigator.getCurrentPage() != homePage) {
+            navigate(homePage, ContainerAnimations.NAVIGATION);
+        }
+    }
+
     /// Shows `node` as the current application dialog.
     ///
     /// If the window has not yet been attached to a scene, showing is deferred to the JavaFX application thread.

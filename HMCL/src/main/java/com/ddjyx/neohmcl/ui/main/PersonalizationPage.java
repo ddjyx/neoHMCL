@@ -418,6 +418,15 @@ public class PersonalizationPage extends StackPane {
         ComponentList backgroundLoadingList = new ComponentList();
 
         {
+            LineSelectButton<LauncherLayout> layoutPane = new LineSelectButton<>();
+            layoutPane.setTitle(i18n("settings.launcher.layout"));
+            layoutPane.setConverter(layout -> i18n("settings.launcher.layout." + layout.name().toLowerCase(Locale.ROOT)));
+            layoutPane.setItems(Arrays.asList(LauncherLayout.values()));
+            layoutPane.valueProperty().bindBidirectional(settings().uiLayoutProperty());
+            themeAppearanceList.getContent().add(layoutPane);
+        }
+
+        {
             LineSelectButton<String> brightnessPane = new LineSelectButton<>();
             brightnessPane.setTitle(i18n("settings.launcher.brightness"));
             brightnessPane.setConverter(name -> i18n("settings.launcher.brightness."

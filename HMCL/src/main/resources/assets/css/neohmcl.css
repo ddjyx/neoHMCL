@@ -1,0 +1,83 @@
+/* PCL-inspired layout, loaded separately from the classic root stylesheet. */
+.neohmcl-root {
+    -fx-background-color: #D6E4F5;
+}
+
+.neohmcl-wordmark {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 16px 0 4px;
+}
+
+.neohmcl-nav-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 20px;
+    -fx-padding: 8px 16px;
+    -fx-cursor: hand;
+}
+
+.neohmcl-nav-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.14);
+}
+
+.neohmcl-nav-button:pressed {
+    -fx-background-color: rgba(255, 255, 255, 0.24);
+}
+
+.neohmcl-account-pane {
+    -fx-background-color: white;
+}
+
+.neohmcl-account-type {
+    -fx-background-radius: 20px;
+}
+
+.neohmcl-profile-name {
+    -fx-font-size: 16px;
+    -fx-text-fill: #243B53;
+}
+
+.neohmcl-outline-button {
+    -fx-background-color: transparent;
+    -fx-border-color: #8C9BAB;
+    -fx-border-width: 1px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 10px 12px;
+    -fx-text-fill: #243B53;
+    -fx-cursor: hand;
+}
+
+.neohmcl-outline-button:hover {
+    -fx-background-color: rgba(36, 59, 83, 0.06);
+}
+
+.neohmcl-outline-button:pressed {
+    -fx-background-color: rgba(36, 59, 83, 0.12);
+}
+
+.neohmcl-outline-button:disabled {
+    -fx-opacity: 0.45;
+}
+
+.neohmcl-launch-button {
+    -fx-min-height: 64px;
+}
+
+.neohmcl-launch-button, .neohmcl-launch-button .label {
+    -fx-text-fill: #2674B8;
+}
+
+.neohmcl-launch-title {
+    -fx-font-size: 16px;
+    -fx-text-fill: #2674B8;
+}
+
+.neohmcl-instance-name {
+    -fx-font-size: 12px;
+    -fx-text-fill: #52677B;
+}
+
+.neohmcl-workspace {
+    -fx-background-color: transparent;
+}

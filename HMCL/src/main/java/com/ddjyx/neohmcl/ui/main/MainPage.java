@@ -65,6 +65,7 @@ import java.util.concurrent.CancellationException;
 import java.util.function.Consumer;
 
 import static com.ddjyx.neohmcl.download.ComponentRemoteVersion.Type.RELEASE;
+import static com.ddjyx.neohmcl.setting.SettingsManager.settings;
 import static com.ddjyx.neohmcl.setting.SettingsManager.state;
 import static com.ddjyx.neohmcl.ui.FXUtils.SINE;
 import static com.ddjyx.neohmcl.util.i18n.I18n.i18n;
@@ -95,6 +96,8 @@ public final class MainPage extends StackPane implements DecoratorPage {
     private TransitionPane announcementPane;
     private final StackPane updatePane;
     private final JFXButton menuButton;
+    /// The classic floating launch controls, hidden when the neoHMCL home layout supplies its own.
+    private final HBox launchPane;
 
     private RemoteVersion lastShownVersion;
 
@@ -201,7 +204,7 @@ public final class MainPage extends StackPane implements DecoratorPage {
             updatePane.getChildren().setAll(new RipplerContainer(hBox), closeUpdateButton);
         }
 
-        HBox launchPane = new HBox();
+        launchPane = new HBox();
         launchPane.getStyleClass().add("launch-pane");
         FXUtils.onChangeAndOperate(selectedRepositorySnapshot, ignored -> mutableInstances.setAll(GameDirectoryManager.getSelectedRepository().getDisplayInstances().toList()));
         FXUtils.onScroll(launchPane, instances, list -> {
@@ -302,6 +305,27 @@ public final class MainPage extends StackPane implements DecoratorPage {
 
         getChildren().addAll(updatePane, launchPane);
 
+        settings().uiLayoutProperty().addListener(observable -> setNeoHmclLayout(isNeoHmclLayout()));
+    }
+
+    /// Returns whether the neoHMCL home currently owns the launch controls.
+    private boolean isNeoHmclLayout() {
+        return settings().uiLayoutProperty().get() == com.ddjyx.neohmcl.setting.LauncherLayout.PCL;
+    }
+
+    /// Shows or hides the classic floating launch controls for the active home layout.
+    public void setNeoHmclLayout(boolean neoHmclLayout) {
+        launchPane.setVisible(!neoHmclLayout);
+        launchPane.setManaged(!neoHmclLayout);
+    }
+
+    /// Launches the selected instance, or installs the latest release before launching when empty.
+    public void launchOrInstall() {
+        if (getCurrentGame() == null) {
+            launchNoGame();
+        } else {
+            launch();
+        }
     }
 
     private void showUpdateDialog(boolean show) {
@@ -338,6 +362,7 @@ public final class MainPage extends StackPane implements DecoratorPage {
         }
     }
 
+    /// Launches the selected instance through the existing game launcher.
     private void launch() {
         HMCLGameRepository repository = GameDirectoryManager.getSelectedRepository();
         Instances.launch(repository.getSelectedInstance());

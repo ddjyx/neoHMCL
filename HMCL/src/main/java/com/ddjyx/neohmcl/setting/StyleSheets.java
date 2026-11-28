@@ -236,7 +236,8 @@ public final class StyleSheets {
                 getFontStyleSheet(),
                 getThemeStyleSheet(),
                 getBrightnessStyleSheet(),
-                "/assets/css/root.css"
+                "/assets/css/root.css",
+                "/assets/css/neohmcl.css"
         };
         stylesheets = FXCollections.observableList(Arrays.asList(array));
 
