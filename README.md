@@ -21,10 +21,18 @@
 | 项目 | 说明 |
 | --- | --- |
 | 代码基线 | 与上游 `HMCL-dev/HMCL` 的 `main` 分支保持一致 |
-| 已完成的改动 | 应用显示名改为 neoHMCL（窗口标题、About 页面、认证页面、Linux 包描述）、禁用上游自动更新检查（非官方构建不再请求上游更新服务，设置页不再显示更新选项）、支持大文件 HTTP Range 分片并发下载、仓库与 Issue 模板整理、移除上游专属的发布/镜像 CI |
+| 已完成的改动 | 全新的 neoHMCL 首页 UI（顶部导航栏布局，可在设置中与经典侧边栏布局切换）、应用显示名改为 neoHMCL（窗口标题、About 页面、认证页面、Linux 包描述）、禁用上游自动更新检查（非官方构建不再请求上游更新服务，设置页不再显示更新选项）、支持大文件 HTTP Range 分片并发下载、仓库与 Issue 模板整理、移除上游专属的发布/镜像 CI |
 | 尚未进行的改动 | 图标、可执行文件名仍沿用上游 |
 
 因此目前的功能、配置格式与上游完全兼容。
+
+### 全新首页 UI
+
+v3.20 引入了全新的 neoHMCL 首页布局：顶部导航栏取代了原有的侧边栏，操作入口（启动、下载、设置、更多）更紧凑，账户与实例信息集中在左侧面板。可在「设置 → 外观 → 首页布局」中随时切换回经典布局，两种布局共享同一套启动与实例管理逻辑，互不影响已有配置。
+
+| neoHMCL 新首页 | neoHMCL 经典首页 |
+| --- | --- |
+| ![neoHMCL 新首页 UI](assets/screenshots/home-neohmcl.png) | ![neoHMCL 经典首页 UI](assets/screenshots/home-classic.png) |
 
 ### 分片并发下载
 
@@ -80,3 +88,9 @@ git merge upstream/main
 ## English
 
 **neoHMCL** is an **unofficial derivative** of [Hello Minecraft! Launcher (HMCL)](https://github.com/HMCL-dev/HMCL). It keeps all upstream features and, for now, only changes the user-facing product name plus repository metadata. It is licensed under the GPLv3 with HMCL's additional terms (a modified version must be renamed or re-numbered, and copyright notices must be preserved). The project is not affiliated with the HMCL team; please report issues to this repository, not upstream.
+
+v3.20 introduces a brand new neoHMCL home page UI with a top navigation bar, switchable back to the classic sidebar layout from Settings → Appearance → Home layout:
+
+| neoHMCL home (new) | neoHMCL home (classic) |
+| --- | --- |
+| ![neoHMCL new home UI](assets/screenshots/home-neohmcl.png) | ![neoHMCL classic home UI](assets/screenshots/home-classic.png) |
